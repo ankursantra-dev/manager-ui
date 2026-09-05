@@ -1,0 +1,2331 @@
+/* ==========================================================================
+   MANAGER DASHBOARD — TaskDrobe
+   Single shared stylesheet for all manager pages.
+   Design system: minimal flat SaaS (NexaMart-inspired).
+   Light: #F7F8FA canvas, pure-white borderless surfaces, soft shadows.
+   Accent: #3B82F6 (royal blue) — exclusive primary.
+   Positive #10B981 / Negative #EF4444 / Neutral chips #F3F4F6.
+   Inter 300 (labels) / 500 (data) / 600 (names) / 700 (headings) / 800 (numerics).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   -------------------------------------------------------------------------- */
+
+:root {
+
+    /* Canvas + surfaces */
+    --bg: #F7F8FA;
+    --card: #FFFFFF;
+    --card-2: #F9FAFB;
+
+    /* Text */
+    --text: #111827;
+    --text-2: #6B7280;
+    --muted: #9CA3AF;
+
+    /* Brand */
+    --primary: #3B82F6;
+    --primary-dark: #2563EB;
+    --primary-soft: rgba(59, 130, 246, 0.10);
+
+    /* Semantic */
+    --green: #10B981;
+    --green-text: #059669;
+    --green-soft: rgba(16, 185, 129, 0.12);
+    --red: #EF4444;
+    --red-text: #DC2626;
+    --red-soft: rgba(239, 68, 68, 0.10);
+    --amber: #F59E0B;
+    --amber-text: #B45309;
+    --amber-soft: rgba(245, 158, 11, 0.12);
+
+    /* Lines + chips */
+    --border: #E5E7EB;
+    --border-soft: #F3F4F6;
+    --chip: #F3F4F6;
+
+    /* Effects */
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.04);
+    --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.03),
+        0 6px 16px -4px rgba(17, 24, 39, 0.06);
+    --shadow-md: 0 2px 4px rgba(17, 24, 39, 0.03),
+        0 12px 32px -8px rgba(17, 24, 39, 0.10);
+    --shadow-lg: 0 16px 40px -12px rgba(17, 24, 39, 0.14),
+        0 2px 6px rgba(17, 24, 39, 0.05);
+    --shadow-blue: 0 6px 16px -4px rgba(59, 130, 246, 0.35);
+
+    /* Motion */
+    --tr: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    --tr-slow: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Chart colors (JS reads these for re-sync on theme change) */
+    --chart-line: #3B82F6;
+    --chart-grid: #F3F4F6;
+    --chart-tick: #9CA3AF;
+    --chart-completed: #3B82F6;
+    --chart-pending: #E5E7EB;
+    --chart-overdue: #EF4444;
+
+    /* Layout */
+    --sidebar-w: 264px;
+    --sidebar-w-collapsed: 0px;
+    --topbar-h: 76px;
+    --manager-topbar-bg: #FFFFFF;
+}
+
+/* Dark theme — same flat aesthetic, deep neutral canvas */
+
+[data-theme="dark"] {
+
+    --bg: #0F1117;
+    --card: #171A21;
+    --card-2: #1E222B;
+
+    --text: #F3F4F6;
+    --text-2: #9CA3AF;
+    --muted: #6B7280;
+
+    --primary: #3B82F6;
+    --primary-dark: #2563EB;
+    --primary-soft: rgba(59, 130, 246, 0.16);
+
+    --green: #10B981;
+    --green-text: #34D399;
+    --green-soft: rgba(16, 185, 129, 0.16);
+    --red: #EF4444;
+    --red-text: #F87171;
+    --red-soft: rgba(239, 68, 68, 0.15);
+    --amber: #F59E0B;
+    --amber-text: #FBBF24;
+    --amber-soft: rgba(245, 158, 11, 0.15);
+
+    --border: #262B36;
+    --border-soft: #20242E;
+    --chip: #232833;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20),
+        0 6px 16px -4px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.22),
+        0 12px 32px -8px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 16px 40px -12px rgba(0, 0, 0, 0.55),
+        0 2px 6px rgba(0, 0, 0, 0.30);
+    --shadow-blue: 0 6px 16px -4px rgba(59, 130, 246, 0.45);
+
+    --chart-line: #3B82F6;
+    --chart-grid: #232833;
+    --chart-tick: #6B7280;
+    --chart-completed: #3B82F6;
+    --chart-pending: #2A303C;
+    --chart-overdue: #EF4444;
+
+    --manager-topbar-bg: #171A21;
+}
+
+/* --------------------------------------------------------------------------
+   2. BASE
+   -------------------------------------------------------------------------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.manager-dashboard-page {
+    font-family: "Inter",
+        -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color var(--tr),
+        color var(--tr);
+}
+
+::selection {
+    background: rgba(59, 130, 246, 0.16);
+    color: var(--text);
+}
+
+/* Scrollbars */
+body.manager-dashboard-page ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+body.manager-dashboard-page ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body.manager-dashboard-page ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 8px;
+    border: 2px solid var(--bg);
+}
+
+body.manager-dashboard-page ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+}
+
+/* Focus */
+body.manager-dashboard-page :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   3. LAYOUT — SIDEBAR
+   -------------------------------------------------------------------------- */
+
+.manager-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    z-index: 60;
+    transition: transform var(--tr-slow),
+        background-color var(--tr);
+}
+
+.manager-sidebar a {
+    color: var(--text-2);
+    text-decoration: none;
+}
+
+/* Brand block */
+.manager-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 20px 18px;
+    flex-shrink: 0;
+}
+
+.manager-brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+    color: #FFFFFF;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: var(--shadow-blue);
+    flex-shrink: 0;
+}
+
+.manager-brand-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.manager-brand-role {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Nav groups */
+.manager-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.manager-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 14px;
+}
+
+.manager-nav-group + .manager-nav-group {
+    border-top: 1px solid var(--border-soft);
+    padding-top: 12px;
+}
+
+.manager-nav-label {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 10px 6px;
+}
+
+/* Nav items */
+.manager-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 10px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    transition: background-color var(--tr),
+        color var(--tr);
+    cursor: pointer;
+    position: relative;
+}
+
+.manager-nav-item i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.manager-nav-item:hover {
+    background: var(--chip);
+    color: var(--text);
+}
+
+.manager-nav-item.active {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .manager-nav-item.active {
+    color: #93C5FD;
+}
+
+/* Sidebar footer */
+.manager-sidebar-footer {
+    flex-shrink: 0;
+    padding: 14px;
+    border-top: 1px solid var(--border-soft);
+}
+
+.manager-sidebar-card {
+    background: var(--card-2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.manager-sidebar-card strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.manager-sidebar-card span {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   3b. SIDEBAR — compat aliases for the real EJS markup
+   (sideBar.ejs uses slightly different class names for the same parts;
+   these rules let this single CSS drive both the previews and the EJS)
+   -------------------------------------------------------------------------- */
+
+/* Brand row: brand link + mobile close button */
+.manager-sidebar-brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.manager-brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+    color: #FFFFFF;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    box-shadow: var(--shadow-blue);
+    flex-shrink: 0;
+}
+
+.manager-brand-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.manager-brand-text span {
+    color: var(--primary);
+}
+
+[data-theme="dark"] .manager-brand-text span {
+    color: #93C5FD;
+}
+
+/* Mobile close button (hidden on desktop) */
+.manager-sidebar-close {
+    display: none;
+    margin-left: auto;
+    margin-right: 14px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        color var(--tr);
+}
+
+.manager-sidebar-close:hover {
+    background: var(--chip);
+    color: var(--text);
+}
+
+/* Scrollable nav column (alias of .manager-nav) */
+.manager-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Icon wrapper used inside nav items */
+.manager-nav-icon {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.manager-nav-item .manager-nav-icon i {
+    width: auto;
+}
+
+/* Sidebar footer area (alias of .manager-sidebar-footer) */
+.manager-sidebar-bottom {
+    flex-shrink: 0;
+    padding: 14px;
+    border-top: 1px solid var(--border-soft);
+}
+
+/* Logout nav item — red hover */
+.manager-nav-item.manager-logout:hover {
+    background: var(--red-soft);
+    color: var(--red-text);
+}
+
+/* Disabled nav item (Messages — coming soon) */
+.manager-nav-item.manager-nav-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.manager-nav-item.manager-nav-disabled:hover {
+    background: transparent;
+    color: var(--text-2);
+}
+
+.manager-coming-soon {
+    margin-left: auto;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--chip);
+    padding: 3px 7px;
+    border-radius: 99px;
+    flex-shrink: 0;
+}
+
+/* Mobile drawer backdrop (desktop: never shown) */
+.manager-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 17, 23, 0.45);
+    z-index: 55;
+    border: 0;
+    cursor: pointer;
+}
+
+@media (max-width: 760px) {
+
+    .manager-sidebar-close {
+        display: grid;
+        place-items: center;
+    }
+
+    body.manager-sidebar-open .manager-sidebar-backdrop {
+        display: block;
+        opacity: 1;
+    }
+
+    .manager-sidebar-brand {
+        padding-right: 0;
+    }
+
+}
+
+/* --------------------------------------------------------------------------
+   4. LAYOUT — MAIN + TOPBAR
+   -------------------------------------------------------------------------- */
+
+.manager-main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    padding: 24px 28px 40px;
+    transition: margin-left var(--tr-slow);
+}
+
+body.manager-sidebar-collapsed .manager-main {
+    margin-left: var(--sidebar-w-collapsed);
+}
+
+/* Topbar */
+.manager-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: var(--topbar-h);
+    padding: 0 4px;
+    margin: -24px 0 24px;
+    background: color-mix(in srgb, var(--manager-topbar-bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-soft);
+    transition: background-color var(--tr),
+        border-color var(--tr);
+}
+
+.manager-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* Menu toggle (mobile) */
+.manager-menu-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        color var(--tr);
+}
+
+.manager-menu-toggle:hover {
+    background: var(--chip);
+    color: var(--text);
+}
+
+/* Greeting */
+.manager-header-greeting {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.manager-header-label {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.manager-header-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.manager-wave {
+    display: inline-block;
+    animation: manager-wave 2.6s ease-in-out infinite;
+    transform-origin: 70% 70%;
+}
+
+@keyframes manager-wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+}
+
+.manager-header-subtitle {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Topbar actions */
+.manager-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* Search */
+.manager-search-wrapper {
+    position: relative;
+}
+
+.manager-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 40px;
+    padding: 0 12px 0 14px;
+    background: var(--chip);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    transition: border-color var(--tr),
+        background-color var(--tr),
+        box-shadow var(--tr);
+}
+
+.manager-search:focus-within {
+    background: var(--card);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.manager-search i {
+    color: var(--muted);
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.manager-search input {
+    all: unset;
+    width: 210px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.manager-search input::placeholder {
+    color: var(--muted);
+    font-weight: 300;
+}
+
+.manager-search kbd {
+    font-family: inherit;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 6px;
+    flex-shrink: 0;
+}
+
+.manager-search-clear {
+    all: unset;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        color var(--tr);
+}
+
+.manager-search-clear:hover {
+    background: var(--border-soft);
+    color: var(--text);
+}
+
+/* Search results dropdown */
+.manager-search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    max-height: 380px;
+    overflow-y: auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    z-index: 80;
+}
+
+.manager-search-results a,
+.manager-search-results .sr-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color var(--tr);
+}
+
+.manager-search-results a:hover,
+.manager-search-results .sr-item:hover {
+    background: var(--card-2);
+}
+
+.manager-search-results a i,
+.manager-search-results .sr-item i {
+    color: var(--muted);
+    font-size: 15px;
+    width: 18px;
+    text-align: center;
+}
+
+/* Notifications */
+.manager-notification-wrapper {
+    position: relative;
+}
+
+.manager-icon-button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-size: 17px;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        color var(--tr),
+        transform var(--tr);
+}
+
+.manager-icon-button:hover {
+    background: var(--chip);
+    color: var(--text);
+}
+
+.manager-icon-button:active {
+    transform: scale(0.94);
+}
+
+.manager-notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #FFFFFF;
+    background: var(--red);
+    border: 2px solid var(--manager-topbar-bg);
+    border-radius: 99px;
+    transition: background-color var(--tr);
+}
+
+.manager-notification-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 80;
+    overflow: hidden;
+}
+
+.manager-notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.manager-notification-header strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.manager-notification-header span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.manager-notification-mark {
+    all: unset;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--primary);
+    cursor: pointer;
+    transition: color var(--tr);
+}
+
+.manager-notification-mark:hover {
+    color: var(--primary-dark);
+}
+
+.manager-notification-list {
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.manager-notification-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 36px 16px;
+    color: var(--muted);
+}
+
+.manager-notification-empty i {
+    font-size: 26px;
+    opacity: 0.6;
+}
+
+.manager-notification-empty span {
+    font-size: 12.5px;
+    font-weight: 300;
+}
+
+/* Profile */
+.manager-profile-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 5px 12px 5px 5px;
+    background: var(--card);
+    border-radius: 99px;
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        box-shadow var(--tr);
+}
+
+.manager-profile-button:hover {
+    background: var(--card-2);
+    box-shadow: var(--shadow-xs);
+}
+
+.manager-profile-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+    color: #FFFFFF;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.manager-profile-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+
+.manager-profile-info strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.manager-profile-info small {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--muted);
+}
+
+.manager-profile-button > i {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+/* Logout */
+.manager-logout-button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-size: 17px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        color var(--tr);
+}
+
+.manager-logout-button:hover {
+    background: var(--red-soft);
+    color: var(--red-text);
+}
+
+/* --------------------------------------------------------------------------
+   5. PAGE CONTEXT + CONTAINER
+   -------------------------------------------------------------------------- */
+
+.manager-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 1420px;
+    width: 100%;
+}
+
+.manager-container > * {
+    min-width: 0;
+}
+
+.manager-page-context {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.manager-page-context span {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+}
+
+.manager-page-context strong {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+.manager-date-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 14px;
+    background: var(--card);
+    border-radius: 99px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    box-shadow: var(--shadow-xs);
+    white-space: nowrap;
+}
+
+.manager-date-chip i {
+    color: var(--primary);
+    font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   6. PANELS — shared card
+   -------------------------------------------------------------------------- */
+
+.manager-panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    transition: background-color var(--tr),
+        box-shadow var(--tr);
+}
+
+.manager-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.manager-section-eyebrow {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 3px;
+}
+
+.manager-panel-header h2,
+.manager-section-heading h2 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+.manager-panel-header p {
+    margin-top: 2px;
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--text-2);
+}
+
+.manager-panel-header-icon {
+    font-size: 18px;
+    color: var(--muted);
+}
+
+.manager-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.manager-static-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 12px;
+    background: var(--chip);
+    color: var(--text-2);
+    border-radius: 99px;
+    font-size: 11.5px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* Buttons */
+.manager-primary-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: #FFFFFF;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-blue);
+    transition: background-color var(--tr),
+        box-shadow var(--tr),
+        transform var(--tr);
+}
+
+.manager-primary-button:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 8px 20px -4px rgba(59, 130, 246, 0.45);
+}
+
+.manager-primary-button:active {
+    transform: scale(0.97);
+}
+
+.manager-text-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 10px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color var(--tr),
+        background-color var(--tr);
+}
+
+.manager-text-button:hover {
+    color: var(--primary-dark);
+    background: var(--primary-soft);
+}
+
+/* Empty state */
+.manager-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.manager-empty-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    background: var(--chip);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.manager-empty-state h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.manager-empty-state p {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--text-2);
+    margin-bottom: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   7. STATS — "At a glance"
+   -------------------------------------------------------------------------- */
+
+.manager-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.manager-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.manager-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.manager-stat-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: box-shadow var(--tr),
+        transform var(--tr),
+        background-color var(--tr);
+}
+
+.manager-stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* Stat icons — neutral chips, blue reserved for primary actions */
+.manager-stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    background: var(--chip);
+    color: var(--text-2);
+    flex-shrink: 0;
+    transition: background-color var(--tr),
+        color var(--tr);
+}
+
+.manager-stat-icon.purple,
+.manager-stat-icon.teal {
+    background: var(--chip);
+    color: var(--text-2);
+}
+
+.manager-stat-icon.blue {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.manager-stat-icon.red {
+    background: var(--red-soft);
+    color: var(--red-text);
+}
+
+.manager-stat-icon.green {
+    background: var(--green-soft);
+    color: var(--green-text);
+}
+
+.manager-stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.manager-stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.manager-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-stat-meta {
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--text-2);
+}
+
+/* --------------------------------------------------------------------------
+   8. DASHBOARD GRIDS
+   -------------------------------------------------------------------------- */
+
+.manager-dashboard-grid {
+    display: grid;
+    gap: 16px;
+}
+
+/* Fluid safety — grid children must never force overflow */
+.manager-dashboard-grid > *,
+.manager-stats-grid > *,
+.manager-project-grid > * {
+    min-width: 0;
+}
+
+.manager-project-body h3,
+.manager-project-body p,
+.manager-activity-content p,
+.manager-attention-content span,
+.manager-deadline-content span {
+    overflow-wrap: break-word;
+}
+
+/* Projects (2fr) + Task overview (1fr) */
+.manager-main-grid {
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+}
+
+/* Attention (1fr) + Deadlines (1fr) */
+.manager-secondary-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+}
+
+/* Activity (1fr) + Team (1fr) */
+.manager-bottom-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   9. PROJECTS PANEL
+   -------------------------------------------------------------------------- */
+
+.manager-project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.manager-project-link {
+    text-decoration: none;
+    color: inherit;
+    outline: none;
+}
+
+.manager-project-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius);
+}
+
+.manager-project-card {
+    background: var(--card-2);
+    border-radius: var(--radius);
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    cursor: pointer;
+    transition: background-color var(--tr),
+        box-shadow var(--tr),
+        transform var(--tr);
+}
+
+.manager-project-card:hover {
+    background: var(--card);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.manager-project-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* Status pills — neutral chips except semantic states */
+.manager-project-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    background: var(--chip);
+    color: var(--text-2);
+    white-space: nowrap;
+}
+
+.manager-project-status > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+}
+
+.manager-project-status.in-progress > span {
+    background: var(--primary);
+}
+
+.manager-project-status.in-progress {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+[data-theme="dark"] .manager-project-status.in-progress {
+    color: #93C5FD;
+}
+
+.manager-project-status.completed > span {
+    background: var(--green);
+}
+
+.manager-project-status.completed {
+    background: var(--green-soft);
+    color: var(--green-text);
+}
+
+.manager-project-status.on-hold > span {
+    background: var(--amber);
+}
+
+.manager-project-status.on-hold {
+    background: var(--amber-soft);
+    color: var(--amber-text);
+}
+
+.manager-project-status.not-started > span {
+    background: var(--muted);
+}
+
+/* Card action buttons */
+.manager-project-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.manager-project-action {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    opacity: 0;
+    transition: background-color var(--tr),
+        color var(--tr),
+        opacity var(--tr);
+}
+
+.manager-project-card:hover .manager-project-action {
+    opacity: 1;
+}
+
+.manager-project-action.project-edit-btn:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.manager-project-action.project-delete-btn:hover {
+    background: var(--red-soft);
+    color: var(--red-text);
+}
+
+/* Card body */
+.manager-project-body h3 {
+    font-size: 15.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.manager-project-body p {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Progress */
+.manager-project-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.manager-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.manager-progress-header span {
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--text-2);
+}
+
+.manager-progress-header strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-progress-track {
+    display: flex;
+    height: 7px;
+    border-radius: 99px;
+    background: var(--border-soft);
+    overflow: hidden;
+}
+
+.manager-progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--primary);
+    transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Progress variants — neutral except semantic */
+.manager-progress-fill.purple {
+    background: var(--primary);
+}
+
+.manager-progress-fill.teal {
+    background: var(--green);
+}
+
+/* Card footer */
+.manager-project-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+}
+
+.manager-project-footer span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.manager-project-footer span i {
+    color: var(--muted);
+    font-size: 12.5px;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   10. TASK OVERVIEW — doughnut chart
+   -------------------------------------------------------------------------- */
+
+.manager-task-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.manager-task-chart-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 240px;
+    margin: 4px auto 10px;
+}
+
+.manager-task-chart-wrapper canvas {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1;
+}
+
+.manager-chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    pointer-events: none;
+}
+
+.manager-chart-center strong {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-chart-center span {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* Legend */
+.manager-task-legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 14px 0 16px;
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.manager-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.manager-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.manager-legend-dot.completed {
+    background: var(--chart-completed);
+}
+
+.manager-legend-dot.pending {
+    background: var(--chart-pending);
+    border: 1px solid var(--muted);
+}
+
+.manager-legend-dot.overdue {
+    background: var(--chart-overdue);
+}
+
+.manager-legend-item strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-legend-item span {
+    display: block;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-2);
+}
+
+/* Completion summary */
+.manager-completion-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.manager-completion-summary > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.manager-completion-summary span {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--text-2);
+}
+
+.manager-completion-summary strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   11. ATTENTION PANEL
+   -------------------------------------------------------------------------- */
+
+.manager-attention-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.manager-attention-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 6px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color var(--tr);
+}
+
+.manager-attention-item + .manager-attention-item {
+    border-top: 1px solid var(--border-soft);
+}
+
+.manager-attention-item:hover {
+    background: var(--card-2);
+}
+
+.manager-attention-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    background: var(--chip);
+    color: var(--text-2);
+    flex-shrink: 0;
+}
+
+.manager-attention-item.danger .manager-attention-icon {
+    background: var(--red-soft);
+    color: var(--red-text);
+}
+
+.manager-attention-item.warning .manager-attention-icon {
+    background: var(--amber-soft);
+    color: var(--amber-text);
+}
+
+.manager-attention-item.success .manager-attention-icon {
+    background: var(--green-soft);
+    color: var(--green-text);
+}
+
+.manager-attention-item.purple .manager-attention-icon {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.manager-attention-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.manager-attention-content strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.manager-attention-content span {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-2);
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.manager-attention-arrow {
+    font-size: 13px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform var(--tr),
+        color var(--tr);
+}
+
+.manager-attention-item:hover .manager-attention-arrow {
+    transform: translateX(3px);
+    color: var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   12. DEADLINES PANEL
+   -------------------------------------------------------------------------- */
+
+.manager-deadline-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.manager-deadline-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 6px;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--tr);
+}
+
+.manager-deadline-item:hover {
+    background: var(--card-2);
+}
+
+.manager-deadline-item + .manager-deadline-item {
+    border-top: 1px solid var(--border-soft);
+}
+
+.manager-deadline-date {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--radius-sm);
+    background: var(--chip);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 0;
+}
+
+.manager-deadline-date strong {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-deadline-date span {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+
+.manager-deadline-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.manager-deadline-content strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.manager-deadline-content span {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-2);
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.manager-deadline-priority {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 99px;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    background: var(--chip);
+    color: var(--text-2);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.manager-deadline-priority.danger {
+    background: var(--red-soft);
+    color: var(--red-text);
+}
+
+.manager-deadline-priority.warning {
+    background: var(--amber-soft);
+    color: var(--amber-text);
+}
+
+.manager-deadline-priority.purple {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+[data-theme="dark"] .manager-deadline-priority.purple {
+    color: #93C5FD;
+}
+
+/* --------------------------------------------------------------------------
+   13. ACTIVITY PANEL
+   -------------------------------------------------------------------------- */
+
+.manager-activity-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.manager-activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 6px;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--tr);
+}
+
+.manager-activity-item:hover {
+    background: var(--card-2);
+}
+
+.manager-activity-item + .manager-activity-item {
+    border-top: 1px solid var(--border-soft);
+}
+
+.manager-activity-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--chip);
+    color: var(--text-2);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.manager-activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.manager-activity-content p {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.5;
+}
+
+.manager-activity-content p strong {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.manager-activity-content span {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   14. TEAM OVERVIEW PANEL
+   -------------------------------------------------------------------------- */
+
+.manager-team-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.manager-team-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 6px;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--tr);
+}
+
+.manager-team-item:hover {
+    background: var(--card-2);
+}
+
+.manager-team-item + .manager-team-item {
+    border-top: 1px solid var(--border-soft);
+}
+
+.manager-team-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.manager-team-avatar-stack {
+    display: flex;
+    align-items: center;
+}
+
+.manager-team-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+    border: 2px solid var(--card);
+    flex-shrink: 0;
+}
+
+.manager-team-avatar + .manager-team-avatar {
+    margin-left: -9px;
+}
+
+.manager-team-main strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.manager-team-main > div > span {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-2);
+    margin-top: 1px;
+}
+
+.manager-team-progress {
+    flex-shrink: 0;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.manager-team-progress-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.manager-team-progress-label span {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.manager-team-progress-label strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-team-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--chip);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-2);
+}
+
+.manager-team-footer i {
+    color: var(--muted);
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   15. ENTRANCE ANIMATION
+   -------------------------------------------------------------------------- */
+
+@keyframes manager-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.manager-stat-card,
+.manager-panel {
+    animation: manager-card-in var(--tr-slow) both;
+}
+
+.manager-stats-grid .manager-stat-card:nth-child(1) { animation-delay: 40ms; }
+.manager-stats-grid .manager-stat-card:nth-child(2) { animation-delay: 80ms; }
+.manager-stats-grid .manager-stat-card:nth-child(3) { animation-delay: 120ms; }
+.manager-stats-grid .manager-stat-card:nth-child(4) { animation-delay: 160ms; }
+
+.manager-container > .manager-dashboard-grid:nth-of-type(1) .manager-panel { animation-delay: 200ms; }
+.manager-container > .manager-dashboard-grid:nth-of-type(2) .manager-panel { animation-delay: 240ms; }
+.manager-container > .manager-dashboard-grid:nth-of-type(3) .manager-panel { animation-delay: 280ms; }
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   16. RESPONSIVE — device ladder
+   ≥1600  full-HD desktop     container widens to 1720, roomier gaps/chart
+   ≤1420  small laptop        container capped at 1420, grids still full
+   ≤1280  laptop              stats stay 4col but tighten; team progress narrows
+   ≤1180  small laptop        stats 2col, search shrinks, team progress 120px
+   ≤1024  tablet landscape    main-grid 1col (chart moves below projects)
+   ≤960   tablet portrait    subtitle+profile name hidden
+   ≤760   phone landscape    sidebar off-canvas + hamburger, all grids 1col
+   ≤560   phone portrait     stats 1col, search hidden, team stacks vertical
+   ≤400   small phone        tighter paddings, legend 1col
+   -------------------------------------------------------------------------- */
+
+/* ≥1600px — full-HD desktops (1920×1080): use the width, stay capped for ultra-wide */
+@media (min-width: 1600px) {
+
+    .manager-container {
+        max-width: 1720px;
+        gap: 20px;
+    }
+
+    .manager-dashboard-grid,
+    .manager-stats-grid,
+    .manager-project-grid {
+        gap: 20px;
+    }
+
+    .manager-task-chart-wrapper {
+        max-width: 300px;
+    }
+
+    .manager-team-progress {
+        width: 170px;
+    }
+
+    .manager-search input {
+        width: 240px;
+    }
+
+    .manager-stat-card {
+        padding: 22px 26px;
+    }
+}
+
+@media (max-width: 1420px) {
+
+    .manager-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 1280px) {
+
+    .manager-team-progress {
+        width: 120px;
+    }
+}
+
+@media (max-width: 1180px) {
+
+    .manager-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .manager-search input {
+        width: 160px;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .manager-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-task-chart-wrapper {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 960px) {
+
+    .manager-search input {
+        width: 130px;
+    }
+
+    .manager-header-subtitle {
+        display: none;
+    }
+
+    .manager-profile-info {
+        display: none;
+    }
+}
+
+@media (max-width: 760px) {
+
+    .manager-sidebar {
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+    }
+
+    body.manager-sidebar-open .manager-sidebar {
+        transform: translateX(0);
+    }
+
+    .manager-main {
+        margin-left: 0;
+        padding: 20px 16px 32px;
+    }
+
+    body.manager-sidebar-collapsed .manager-main {
+        margin-left: 0;
+    }
+
+    .manager-menu-toggle {
+        display: grid;
+    }
+
+    .manager-topbar {
+        margin: -20px 0 20px;
+        min-height: 64px;
+        padding: 8px 0;
+    }
+
+    .manager-secondary-grid,
+    .manager-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-page-context {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .manager-project-actions {
+        opacity: 1;
+    }
+
+    .manager-panel {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 560px) {
+
+    .manager-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-search {
+        display: none;
+    }
+
+    .manager-task-legend {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .manager-team-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .manager-team-progress {
+        width: 100%;
+    }
+
+    .manager-deadline-item {
+        flex-wrap: wrap;
+    }
+
+    .manager-deadline-priority {
+        margin-left: 60px;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .manager-main {
+        padding: 16px 12px 24px;
+    }
+
+    .manager-topbar {
+        margin: -16px 0 16px;
+    }
+
+    .manager-panel {
+        padding: 16px;
+    }
+
+    .manager-task-legend {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-logout-button {
+        display: none;
+    }
+
+    .manager-stat-card {
+        padding: 16px 18px;
+    }
+}
+
+/* Touch devices — no hover-induced layout shifts */
+@media (hover: none) {
+
+    .manager-stat-card:hover,
+    .manager-project-card:hover,
+    .manager-team-item:hover,
+    .manager-deadline-item:hover,
+    .manager-activity-item:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+    }
+}

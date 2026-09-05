@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manager Dashboard | TaskDrobe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./manager_dashboard.css">
+</head>
+<body class="manager-dashboard-page">
+
+    <aside class="manager-sidebar">
+        <div class="manager-sidebar-brand">
+            <a class="manager-brand" href="#">
+                <span class="manager-brand-icon"><i class="bi bi-kanban"></i></span>
+                <span class="manager-brand-text">Task<span>Drobe</span></span>
+            </a>
+            <button class="manager-sidebar-close" id="managerSidebarClose" aria-label="Close navigation">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="manager-sidebar-content">
+            <div class="manager-nav-group">
+                <div class="manager-nav-label">Main</div>
+                <a class="manager-nav-item active" href="#">
+                    <span class="manager-nav-icon"><i class="bi bi-grid-1x2"></i></span>
+                    Dashboard
+                </a>
+                <a class="manager-nav-item" href="#">
+                    <span class="manager-nav-icon"><i class="bi bi-kanban"></i></span>
+                    Projects
+                </a>
+                <a class="manager-nav-item" href="#">
+                    <span class="manager-nav-icon"><i class="bi bi-check2-square"></i></span>
+                    Tasks
+                </a>
+            </div>
+
+            <div class="manager-nav-group">
+                <div class="manager-nav-label">Workspace</div>
+                <a class="manager-nav-item" href="#">
+                    <span class="manager-nav-icon"><i class="bi bi-people"></i></span>
+                    Teams
+                </a>
+                <a class="manager-nav-item" href="#">
+                    <span class="manager-nav-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                    Reports
+                </a>
+                <button class="manager-nav-item manager-nav-disabled" disabled>
+                    <span class="manager-nav-icon"><i class="bi bi-chat-dots"></i></span>
+                    Messages
+                    <span class="manager-coming-soon">Soon</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="manager-sidebar-bottom">
+            <a class="manager-nav-item manager-logout" href="#">
+                <span class="manager-nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+                Logout
+            </a>
+        </div>
+    </aside>
+    <div class="manager-sidebar-backdrop" id="managerSidebarBackdrop"></div>
+
+    <main class="manager-main">
+        <header class="manager-topbar">
+            <div class="manager-topbar-left">
+                <button class="manager-menu-toggle" id="managerSidebarToggle" aria-label="Open navigation" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="manager-header-greeting">
+                    <span class="manager-header-label">MANAGER OVERVIEW</span>
+                    <div class="manager-header-title">Good morning, Maya Rahman <span class="manager-wave">👋</span></div>
+                    <div class="manager-header-subtitle">Here's what's happening across your workspace today.</div>
+                </div>
+            </div>
+
+            <div class="manager-topbar-actions">
+                <div class="manager-search-wrapper">
+                    <div class="manager-search">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="globalSearch" placeholder="Search projects or tasks..." autocomplete="off" aria-label="Search">
+                        <button type="button" class="manager-search-clear d-none" id="clearSearch" aria-label="Clear search">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                        <kbd>⌘ K</kbd>
+                    </div>
+                    <div class="manager-search-results d-none" id="searchResults"></div>
+                </div>
+
+                <div class="manager-notification-wrapper">
+                    <button class="manager-icon-button" id="notificationButton" data-user-id="1" aria-label="Notifications">
+                        <i class="bi bi-bell"></i>
+                        <span class="manager-notification-badge d-none" id="notificationBadge">0</span>
+                    </button>
+                    <div class="manager-notification-dropdown d-none" id="notificationDropdown">
+                        <div class="manager-notification-header">
+                            <strong>Notifications <span id="notificationHeaderCount">0</span></strong>
+                            <button class="manager-notification-mark" id="markAllNotifications">Mark all read</button>
+                        </div>
+                        <div class="manager-notification-list" id="notificationList">
+                            <div class="manager-notification-empty">
+                                <i class="bi bi-bell-slash"></i>
+                                <span>No notifications</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="manager-icon-button" id="themeToggle" aria-label="Toggle theme">
+                    <i class="bi bi-moon"></i>
+                </button>
+
+                <a class="manager-profile-button" href="#">
+                    <span class="manager-profile-avatar">M</span>
+                    <span class="manager-profile-info">
+                        <strong>Maya Rahman</strong>
+                        <small>Manager</small>
+                    </span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+
+                <a class="manager-logout-button" href="#" aria-label="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="manager-container">
+            <div class="manager-page-context">
+                <div>
+                    <span>Workspace</span>
+                    <strong>Manager Dashboard</strong>
+                </div>
+                <div class="manager-date-chip">
+                    <i class="bi bi-calendar3"></i>
+                    <span id="managerDateChip"></span>
+                </div>
+            </div>
+
+            <section class="manager-section">
+                <div class="manager-section-heading">
+                    <div>
+                        <span class="manager-section-eyebrow">OVERVIEW</span>
+                        <h2>At a glance</h2>
+                    </div>
+                </div>
+
+                <div class="manager-stats-grid">
+                    <article class="manager-stat-card">
+                        <div class="manager-stat-icon purple">
+                            <i class="bi bi-kanban"></i>
+                        </div>
+                        <div class="manager-stat-content">
+                            <span class="manager-stat-label">Total Projects</span>
+                            <strong class="manager-stat-value">12</strong>
+                            <span class="manager-stat-meta">8 currently active</span>
+                        </div>
+                    </article>
+
+                    <article class="manager-stat-card">
+                        <div class="manager-stat-icon teal">
+                            <i class="bi bi-check2-square"></i>
+                        </div>
+                        <div class="manager-stat-content">
+                            <span class="manager-stat-label">Total Tasks</span>
+                            <strong class="manager-stat-value">34</strong>
+                            <span class="manager-stat-meta">Across all projects</span>
+                        </div>
+                    </article>
+
+                    <article class="manager-stat-card">
+                        <div class="manager-stat-icon blue">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="manager-stat-content">
+                            <span class="manager-stat-label">Team Members</span>
+                            <strong class="manager-stat-value">7</strong>
+                            <span class="manager-stat-meta">Across your teams</span>
+                        </div>
+                    </article>
+
+                    <article class="manager-stat-card">
+                        <div class="manager-stat-icon red">
+                            <i class="bi bi-exclamation-circle"></i>
+                        </div>
+                        <div class="manager-stat-content">
+                            <span class="manager-stat-label">Attention Required</span>
+                            <strong class="manager-stat-value">4</strong>
+                            <span class="manager-stat-meta">Overdue tasks</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <div class="manager-dashboard-grid manager-main-grid">
+                <section class="manager-panel manager-projects-panel">
+                    <div class="manager-panel-header">
+                        <div>
+                            <span class="manager-section-eyebrow">PORTFOLIO</span>
+                            <h2>Projects</h2>
+                            <p>Keep an eye on progress across your active work.</p>
+                        </div>
+                        <div class="manager-panel-actions">
+                            <button type="button" class="manager-primary-button">
+                                <i class="bi bi-plus-lg"></i>
+                                Add Project
+                            </button>
+                            <a href="#" class="manager-text-button">
+                                View all
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="manager-project-grid" id="managerProjectsGrid">
+                        <article class="project-card-link manager-project-link" tabindex="0" role="link">
+                            <div class="manager-project-card">
+                                <div class="manager-project-top">
+                                    <span class="manager-project-status in-progress"><span></span>In Progress</span>
+                                    <div class="manager-project-actions">
+                                        <button type="button" class="manager-project-action" aria-label="Edit Website Redesign"><i class="bi bi-pencil"></i></button>
+                                        <button type="button" class="manager-project-action" aria-label="Delete Website Redesign"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                </div>
+                                <div class="manager-project-body">
+                                    <h3>Website Redesign</h3>
+                                    <p>Refresh the marketing site with the new brand system.</p>
+                                </div>
+                                <div class="manager-project-progress">
+                                    <div class="manager-progress-header">
+                                        <span>Progress</span>
+                                        <strong>64%</strong>
+                                    </div>
+                                    <div class="manager-progress-track">
+                                        <div class="manager-progress-fill" style="width: 64%"></div>
+                                    </div>
+                                </div>
+                                <div class="manager-project-footer">
+                                    <span><i class="bi bi-calendar3"></i>Sep 15, 2026</span>
+                                    <span><i class="bi bi-person"></i>Maya Rahman</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="project-card-link manager-project-link" tabindex="0" role="link">
+                            <div class="manager-project-card">
+                                <div class="manager-project-top">
+                                    <span class="manager-project-status completed"><span></span>Completed</span>
+                                    <div class="manager-project-actions">
+                                        <button type="button" class="manager-project-action" aria-label="Edit Mobile Application"><i class="bi bi-pencil"></i></button>
+                                        <button type="button" class="manager-project-action" aria-label="Delete Mobile Application"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                </div>
+                                <div class="manager-project-body">
+                                    <h3>Mobile Application</h3>
+                                    <p>Cross-platform app for field teams, offline-first.</p>
+                                </div>
+                                <div class="manager-project-progress">
+                                    <div class="manager-progress-header">
+                                        <span>Progress</span>
+                                        <strong>100%</strong>
+                                    </div>
+                                    <div class="manager-progress-track">
+                                        <div class="manager-progress-fill" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="manager-project-footer">
+                                    <span><i class="bi bi-calendar3"></i>Aug 30, 2026</span>
+                                    <span><i class="bi bi-person"></i>Alex Kim</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="project-card-link manager-project-link" tabindex="0" role="link">
+                            <div class="manager-project-card">
+                                <div class="manager-project-top">
+                                    <span class="manager-project-status on-hold"><span></span>On Hold</span>
+                                    <div class="manager-project-actions">
+                                        <button type="button" class="manager-project-action" aria-label="Edit Analytics Platform"><i class="bi bi-pencil"></i></button>
+                                        <button type="button" class="manager-project-action" aria-label="Delete Analytics Platform"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                </div>
+                                <div class="manager-project-body">
+                                    <h3>Analytics Platform</h3>
+                                    <p>Self-serve reporting for growth and retention.</p>
+                                </div>
+                                <div class="manager-project-progress">
+                                    <div class="manager-progress-header">
+                                        <span>Progress</span>
+                                        <strong>35%</strong>
+                                    </div>
+                                    <div class="manager-progress-track">
+                                        <div class="manager-progress-fill" style="width: 35%"></div>
+                                    </div>
+                                </div>
+                                <div class="manager-project-footer">
+                                    <span><i class="bi bi-calendar3"></i>Oct 3, 2026</span>
+                                    <span><i class="bi bi-person"></i>Jordan Silva</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="project-card-link manager-project-link" tabindex="0" role="link">
+                            <div class="manager-project-card">
+                                <div class="manager-project-top">
+                                    <span class="manager-project-status not-started"><span></span>Not Started</span>
+                                    <div class="manager-project-actions">
+                                        <button type="button" class="manager-project-action" aria-label="Edit API Integration"><i class="bi bi-pencil"></i></button>
+                                        <button type="button" class="manager-project-action" aria-label="Delete API Integration"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                </div>
+                                <div class="manager-project-body">
+                                    <h3>API Integration</h3>
+                                    <p>Unify partner data into a single pipeline.</p>
+                                </div>
+                                <div class="manager-project-progress">
+                                    <div class="manager-progress-header">
+                                        <span>Progress</span>
+                                        <strong>0%</strong>
+                                    </div>
+                                    <div class="manager-progress-track">
+                                        <div class="manager-progress-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="manager-project-footer">
+                                    <span><i class="bi bi-calendar3"></i>No deadline</span>
+                                    <span><i class="bi bi-person"></i>No owner</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="manager-panel manager-task-panel">
+                    <div class="manager-panel-header">
+                        <div>
+                            <span class="manager-section-eyebrow">TASKS</span>
+                            <h2>Task overview</h2>
+                            <p>Current task distribution.</p>
+                        </div>
+                    </div>
+                    <div class="manager-task-chart-wrapper">
+                        <canvas id="taskChart" data-completed="21" data-pending="9" data-overdue="4"></canvas>
+                        <div class="manager-chart-center">
+                            <strong>34</strong>
+                            <span>Total Tasks</span>
+                        </div>
+                    </div>
+                    <div class="manager-task-legend">
+                        <div class="manager-legend-item">
+                            <span class="manager-legend-dot completed"></span>
+                            <div>
+                                <strong>21</strong>
+                                <span>Completed</span>
+                            </div>
+                        </div>
+                        <div class="manager-legend-item">
+                            <span class="manager-legend-dot pending"></span>
+                            <div>
+                                <strong>9</strong>
+                                <span>Pending</span>
+                            </div>
+                        </div>
+                        <div class="manager-legend-item">
+                            <span class="manager-legend-dot overdue"></span>
+                            <div>
+                                <strong>4</strong>
+                                <span>Overdue</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="manager-completion-summary">
+                        <div>
+                            <span>Overall completion</span>
+                            <strong>62%</strong>
+                        </div>
+                        <div class="manager-progress-track">
+                            <div class="manager-progress-fill teal" style="width: 62%"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="manager-dashboard-grid manager-secondary-grid">
+                <section class="manager-panel">
+                    <div class="manager-panel-header">
+                        <div>
+                            <span class="manager-section-eyebrow">PRIORITY</span>
+                            <h2>Attention required</h2>
+                            <p>Items that may need your attention.</p>
+                        </div>
+                    </div>
+                    <div class="manager-attention-list">
+                        <a href="#" class="manager-attention-item danger">
+                            <div class="manager-attention-icon">
+                                <i class="bi bi-exclamation-octagon"></i>
+                            </div>
+                            <div class="manager-attention-content">
+                                <strong>4 overdue tasks</strong>
+                                <span>Tasks past their due date need immediate action.</span>
+                            </div>
+                            <i class="bi bi-chevron-right manager-attention-arrow"></i>
+                        </a>
+                        <a href="#" class="manager-attention-item warning">
+                            <div class="manager-attention-icon">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="manager-attention-content">
+                                <strong>2 projects nearing deadline</strong>
+                                <span>Website Redesign and Analytics Platform.</span>
+                            </div>
+                            <i class="bi bi-chevron-right manager-attention-arrow"></i>
+                        </a>
+                        <a href="#" class="manager-attention-item purple">
+                            <div class="manager-attention-icon">
+                                <i class="bi bi-person-exclamation"></i>
+                            </div>
+                            <div class="manager-attention-content">
+                                <strong>1 task needs assignment</strong>
+                                <span>API Integration setup has no owner yet.</span>
+                            </div>
+                            <i class="bi bi-chevron-right manager-attention-arrow"></i>
+                        </a>
+                    </div>
+                </section>
+
+                <section class="manager-panel">
+                    <div class="manager-panel-header">
+                        <div>
+                            <span class="manager-section-eyebrow">SCHEDULE</span>
+                            <h2>Upcoming deadlines</h2>
+                            <p>What is coming up next.</p>
+                        </div>
+                        <i class="bi bi-calendar3 manager-panel-header-icon"></i>
+                    </div>
+                    <div class="manager-deadline-list">
+                        <div class="manager-deadline-item">
+                            <div class="manager-deadline-date">
+                                <strong>15</strong>
+                                <span>SEP</span>
+                            </div>
+                            <div class="manager-deadline-content">
+                                <strong>Website Redesign</strong>
+                                <span>Launch the refreshed marketing site.</span>
+                            </div>
+                            <span class="manager-deadline-priority danger">High</span>
+                        </div>
+                        <div class="manager-deadline-item">
+                            <div class="manager-deadline-date">
+                                <strong>21</strong>
+                                <span>SEP</span>
+                            </div>
+                            <div class="manager-deadline-content">
+                                <strong>Mobile Application</strong>
+                                <span>Submit to app store review.</span>
+                            </div>
+                            <span class="manager-deadline-priority warning">Medium</span>
+                        </div>
+                        <div class="manager-deadline-item">
+                            <div class="manager-deadline-date">
+                                <strong>03</strong>
+                                <span>OCT</span>
+                            </div>
+                            <div class="manager-deadline-content">
+                                <strong>Analytics Platform</strong>
+                                <span>Ship the first reporting module.</span>
+                            </div>
+                            <span class="manager-deadline-priority purple">Planned</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="manager-dashboard-grid manager-bottom-grid">
+                <section class="manager-panel">
+                    <div class="manager-panel-header">
+                        <div>
+                            <span class="manager-section-eyebrow">ACTIVITY</span>
+                            <h2>Recent activity</h2>
+                            <p>Recent workspace events.</p>
+                        </div>
+                    </div>
+                    <div class="manager-activity-list">
+                        <div class="manager-activity-item">
+                            <div class="manager-activity-avatar">AK</div>
+                            <div class="manager-activity-content">
+                                <p><strong>Alex Kim</strong> completed <strong>Onboarding flow polish</strong></p>
+                                <span>2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="manager-activity-item">
+                            <div class="manager-activity-avatar">MR</div>
+                            <div class="manager-activity-content">
+                                <p><strong>Maya Rahman</strong> assigned <strong>API review</strong> to <strong>Jordan Silva</strong></p>
+                                <span>5 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="manager-activity-item">
+                            <div class="manager-activity-avatar">JS</div>
+                            <div class="manager-activity-content">
+                                <p><strong>Jordan Silva</strong> moved <strong>Retention query</strong> to In Review</p>
+                                <span>Yesterday</span>
+                            </div>
+                        </div>
+                        <div class="manager-activity-item">
+                            <div class="manager-activity-avatar">RN</div>
+                            <div class="manager-activity-content">
+                                <p><strong>Rita Nunes</strong> commented on <strong>Website Redesign</strong></p>
+                                <span>Yesterday</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="manager-panel">
+                    <div class="manager-panel-header">
+                        <div>
+                            <span class="manager-section-eyebrow">PEOPLE</span>
+                            <h2>Team overview</h2>
+                            <p>A quick look at your teams.</p>
+                        </div>
+                        <span class="manager-static-badge">Preview</span>
+                    </div>
+                    <div class="manager-team-list">
+                        <div class="manager-team-item">
+                            <div class="manager-team-main">
+                                <div class="manager-team-avatar-stack">
+                                    <span class="manager-team-avatar">AK</span>
+                                    <span class="manager-team-avatar">MR</span>
+                                    <span class="manager-team-avatar">JS</span>
+                                </div>
+                                <div>
+                                    <strong>Product Team</strong>
+                                    <span>4 members · 12 active tasks</span>
+                                </div>
+                            </div>
+                            <div class="manager-team-progress">
+                                <div class="manager-team-progress-label">
+                                    <span>Progress</span>
+                                    <strong>78%</strong>
+                                </div>
+                                <div class="manager-progress-track">
+                                    <div class="manager-progress-fill purple" style="width: 78%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="manager-team-item">
+                            <div class="manager-team-main">
+                                <div class="manager-team-avatar-stack">
+                                    <span class="manager-team-avatar">RN</span>
+                                    <span class="manager-team-avatar">SK</span>
+                                    <span class="manager-team-avatar">AD</span>
+                                </div>
+                                <div>
+                                    <strong>Delivery Team</strong>
+                                    <span>3 members · 8 active tasks</span>
+                                </div>
+                            </div>
+                            <div class="manager-team-progress">
+                                <div class="manager-team-progress-label">
+                                    <span>Progress</span>
+                                    <strong>91%</strong>
+                                </div>
+                                <div class="manager-progress-track">
+                                    <div class="manager-progress-fill purple" style="width: 91%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="manager-team-footer">
+                        <i class="bi bi-info-circle"></i>
+                        Team membership will become dynamic when the team backend is added.
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    /* ---------- Dynamic date chip ---------- */
+    var dateChip = document.getElementById("managerDateChip");
+    if (dateChip) {
+        dateChip.textContent = new Date().toLocaleDateString("en-US", {
+            weekday: "long", month: "long", day: "numeric", year: "numeric"
+        });
+    }
+
+    /* ---------- Mobile sidebar ---------- */
+    var sidebarToggle = document.getElementById("managerSidebarToggle");
+    var sidebarClose = document.getElementById("managerSidebarClose");
+    var backdrop = document.getElementById("managerSidebarBackdrop");
+
+    function closeSidebar() {
+        document.body.classList.remove("manager-sidebar-open");
+        if (sidebarToggle) sidebarToggle.setAttribute("aria-expanded", "false");
+    }
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+            var open = document.body.classList.toggle("manager-sidebar-open");
+            sidebarToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+    }
+    if (sidebarClose) sidebarClose.addEventListener("click", closeSidebar);
+    if (backdrop) backdrop.addEventListener("click", closeSidebar);
+
+    /* ---------- Theme toggle ---------- */
+    var themeToggle = document.getElementById("themeToggle");
+    var themeIcon = themeToggle ? themeToggle.querySelector("i") : null;
+
+    function readToken(name, fallback) {
+        var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+    }
+
+    function applyTheme(theme) {
+        if (theme === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            if (themeIcon) themeIcon.className = "bi bi-sun";
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+            if (themeIcon) themeIcon.className = "bi bi-moon";
+        }
+    }
+
+    try {
+        var saved = localStorage.getItem("manager-theme");
+        if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            applyTheme("dark");
+        }
+    } catch (e) { /* storage unavailable — stay light */ }
+
+    if (themeToggle) {
+        themeToggle.addEventListener("click", function () {
+            var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            applyTheme(isDark ? "light" : "dark");
+            try { localStorage.setItem("manager-theme", isDark ? "light" : "dark"); } catch (e) {}
+            syncChartTheme();
+        });
+    }
+
+    /* ---------- Task doughnut chart ---------- */
+    var canvas = document.getElementById("taskChart");
+    var taskChart = null;
+
+    function chartColors() {
+        return {
+            completed: readToken("--chart-completed", "#3B82F6"),
+            pending: readToken("--chart-pending", "#E5E7EB"),
+            overdue: readToken("--chart-overdue", "#EF4444"),
+            card: readToken("--card", "#FFFFFF")
+        };
+    }
+
+    if (canvas && window.Chart) {
+        var c = chartColors();
+        taskChart = new Chart(canvas, {
+            type: "doughnut",
+            data: {
+                labels: ["Completed", "Pending", "Overdue"],
+                datasets: [{
+                    data: [
+                        parseInt(canvas.dataset.completed, 10),
+                        parseInt(canvas.dataset.pending, 10),
+                        parseInt(canvas.dataset.overdue, 10)
+                    ],
+                    backgroundColor: [c.completed, c.pending, c.overdue],
+                    borderColor: c.card,
+                    borderWidth: 3,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "74%",
+                animation: { duration: 400 },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: "#111827",
+                        padding: 10,
+                        cornerRadius: 8,
+                        titleFont: { family: "Inter, sans-serif", weight: "600", size: 12 },
+                        bodyFont: { family: "Inter, sans-serif", weight: "500", size: 12 },
+                        callbacks: {
+                            label: function (ctx) {
+                                return " " + ctx.label + ": " + ctx.parsed + " tasks";
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function syncChartTheme() {
+        if (!taskChart) return;
+        var c = chartColors();
+        taskChart.data.datasets[0].backgroundColor = [c.completed, c.pending, c.overdue];
+        taskChart.data.datasets[0].borderColor = c.card;
+        taskChart.update();
+    }
+})();
+</script>
+
+</body>
+</html>
