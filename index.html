@@ -4,187 +4,1832 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manager UI | TaskDrobe</title>
+    <title>Ankur Santra — Portfolio</title>
+    <meta name="description" content="Ankur Santra designs and builds the TaskDrobe manager suite — one design system, nine breakpoints, two themes.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./manager_dashboard.css">
     <style>
-        /* Landing-only styles — everything visual comes from manager_dashboard.css tokens */
-        body.manager-dashboard-page {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 32px 20px;
+        /* ================================================================
+           1. DESIGN TOKENS — Minifolio spec, exact values
+           ================================================================ */
+        :root {
+            --color-bg-page: #0E0E0E;
+            --color-bg-card: #161616;
+            --color-bg-card-alt: #1E1E1E;
+            --color-border: #2A2A2A;
+            --color-accent: #D4FA3D;
+            --color-accent-hover: #E4FF6B;
+            --color-accent-active: #B8DE1F;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A6A6A6;
+            --color-text-muted: #6E6E6E;
+            --color-text-on-accent: #0A0A0A;
+            --color-success: #4ADE80;
+            --color-star: #D4FA3D;
+            --shadow-card: 0 20px 40px -12px rgba(0, 0, 0, 0.55);
+            --shadow-card-hover: 0 28px 55px -10px rgba(0, 0, 0, 0.65);
+            --shadow-accent: 0 8px 20px rgba(212, 250, 61, 0.35);
+            --radius-card: 16px;
+            --radius-chip: 10px;
+            --radius-pill: 999px;
+
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-nav: cubic-bezier(0.65, 0, 0.35, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            --container-pad: 20px;
+            --section-y: 56px;
+            --grid-gap: 16px;
+            --h1-size: 26px;
+            --h2-size: 22px;
         }
 
-        .landing-wrap {
-            width: 100%;
-            max-width: 720px;
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
+        @media (min-width: 640px) {
+            :root { --container-pad: 24px; --grid-gap: 20px; }
         }
 
-        .landing-brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+        @media (min-width: 768px) {
+            :root { --section-y: 80px; --h1-size: 32px; --h2-size: 26px; }
         }
 
-        .landing-hero h1 {
-            font-size: clamp(26px, 4vw, 34px);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            color: var(--text);
-        }
-
-        .landing-hero h1 span {
-            color: var(--primary);
-        }
-
-        /* Solid lime frame bands — top and bottom */
-        .landing-band {
-            height: 10px;
-            background: var(--primary);
-            border-radius: 99px;
-            flex-shrink: 0;
-        }
-
-        .landing-hero p {
-            margin-top: 6px;
-            font-size: 14.5px;
-            font-weight: 300;
-            color: var(--text-2);
-        }
-
-        .landing-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        @media (max-width: 640px) {
-            .landing-cards {
-                grid-template-columns: 1fr;
+        @media (min-width: 1024px) {
+            :root {
+                --container-pad: 48px;
+                --h1-size: 40px;
+                --h2-size: 30px;
             }
         }
 
-        .landing-card {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            padding: 22px;
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            text-decoration: none;
-            transition: box-shadow var(--tr),
-                transform var(--tr);
+        @media (min-width: 1280px) {
+            :root { --container-pad: 80px; --h1-size: 44px; --h2-size: 32px; }
         }
 
-        .landing-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
+        /* ================================================================
+           2. BASE
+           ================================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .landing-card:focus-visible {
-            outline: 2px solid var(--primary);
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", "Satoshi", -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.65;
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            background: var(--color-bg-page);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--color-accent);
+            color: var(--color-text-on-accent);
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--color-text-primary);
             outline-offset: 2px;
-            border-radius: var(--radius);
+            border-radius: 4px;
         }
 
-        .landing-card-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: var(--radius-sm);
-            display: grid;
-            place-items: center;
+        button, a {
+            cursor: pointer;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-inline: var(--container-pad);
+        }
+
+        @media (min-width: 1536px) {
+            .container { max-width: 1400px; }
+        }
+
+        section {
+            padding-block: var(--section-y);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--color-bg-card-alt);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            color: var(--color-text-secondary);
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-accent);
+        }
+
+        h1 {
+            font-size: clamp(26px, 4vw + 10px, var(--h1-size));
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--color-text-primary);
+        }
+
+        h2 {
+            font-size: var(--h2-size);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+            color: var(--color-text-primary);
+        }
+
+        h3 {
             font-size: 18px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--color-text-primary);
+        }
+
+        p {
+            color: var(--color-text-secondary);
+        }
+
+        /* One lime word per headline — color only, never weight */
+        h1 em, h2 em {
+            font-style: normal;
+            color: var(--color-accent);
+        }
+
+        /* ================================================================
+           3. TOP BAND — solid lime, 96px / 64px mobile
+           ================================================================ */
+        .band {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--color-accent);
+            min-height: 64px;
+        }
+
+        @media (min-width: 768px) {
+            .band { min-height: 96px; }
+        }
+
+        .band-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 12px var(--container-pad);
+            min-height: inherit;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
             flex-shrink: 0;
         }
 
-        .landing-card-icon.blue {
-            background: var(--primary-soft);
-            color: var(--primary);
+        .brand-mark {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: var(--radius-chip);
+            background: var(--color-text-on-accent);
+            color: var(--color-accent);
+            font-weight: 800;
+            font-size: 16px;
         }
 
-        .landing-card-icon.green {
-            background: var(--green-soft);
-            color: var(--green-text);
-        }
-
-        .landing-card-body strong {
-            display: block;
-            font-size: 14.5px;
+        .brand-name {
+            font-size: 17px;
             font-weight: 700;
-            color: var(--text);
+            letter-spacing: -0.01em;
+            color: var(--color-text-on-accent);
         }
 
-        .landing-card-body span {
-            display: block;
-            margin-top: 3px;
-            font-size: 12.5px;
-            font-weight: 300;
-            color: var(--text-2);
-            line-height: 1.5;
+        /* Nav pill — dark rounded container, sliding black active chip */
+        .nav-pill {
+            position: relative;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 5px;
+            background: var(--color-text-on-accent);
+            border-radius: var(--radius-pill);
         }
 
-        .landing-card-body em {
+        @media (min-width: 768px) {
+            .nav-pill { display: flex; }
+        }
+
+        .nav-chip {
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            left: 5px;
+            width: 0;
+            background: #FFFFFF;
+            border-radius: var(--radius-pill);
+            transition: transform 300ms var(--ease-nav),
+                width 300ms var(--ease-nav);
+            z-index: 0;
+        }
+
+        .nav-pill a {
+            position: relative;
+            z-index: 1;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-on-accent);
+            text-decoration: none;
+            opacity: 0.75;
+            transition: opacity 250ms ease;
+        }
+
+        .nav-pill a:hover,
+        .nav-pill a.active {
+            opacity: 1;
+        }
+
+        .band-cta {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .band-cta { display: inline-flex; }
+        }
+
+        .btn-band {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            font-style: normal;
-            margin-top: 10px;
-            font-size: 12px;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--color-text-on-accent);
+            color: var(--color-accent);
+            border: none;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--primary);
+            text-decoration: none;
+            transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .landing-foot {
+        .btn-band:hover {
+            background: #1A1A1A;
+            transform: translateY(-2px);
+        }
+
+        .btn-band:active {
+            transform: translateY(0) scale(0.97);
+        }
+
+        /* Hamburger — below 768px */
+        .hamburger {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: var(--radius-chip);
+            background: var(--color-text-on-accent);
+            color: var(--color-accent);
+            font-size: 20px;
+        }
+
+        .hamburger:active {
+            transform: scale(0.9);
+            transition: transform 300ms var(--ease-spring);
+        }
+
+        @media (min-width: 768px) {
+            .hamburger { display: none; }
+        }
+
+        /* Full-screen mobile menu */
+        .menu {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: var(--color-bg-page);
+            display: flex;
+            flex-direction: column;
+            padding: 24px var(--container-pad) 48px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 250ms ease, visibility 250ms ease;
+        }
+
+        .menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-head {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 300;
-            color: var(--muted);
+            justify-content: space-between;
+            margin-bottom: 48px;
         }
 
-        .landing-foot i {
-            font-size: 13px;
+        .menu-close {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-chip);
+            background: var(--color-bg-card);
+            color: var(--color-text-primary);
+            font-size: 18px;
         }
+
+        .menu-close:active {
+            transform: scale(0.9);
+            transition: transform 300ms var(--ease-spring);
+        }
+
+        .menu a.menu-link {
+            padding: 16px 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--color-border);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 400ms ease-out, transform 400ms ease-out;
+        }
+
+        .menu.open a.menu-link {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .menu .menu-cta {
+            margin-top: auto;
+        }
+
+        /* ================================================================
+           4. HERO — 2-col 60/40 desktop, collage right
+           ================================================================ */
+        .hero {
+            padding-block: var(--section-y);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 60fr 40fr;
+                gap: 64px;
+            }
+        }
+
+        .hero-copy > * {
+            margin-top: 24px;
+        }
+
+        .hero-copy > :first-child {
+            margin-top: 0;
+        }
+
+        .hero-copy p {
+            max-width: 52ch;
+            font-size: 15px;
+        }
+
+        @media (max-width: 479px) {
+            .hero-copy p { font-size: 14px; }
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        @media (max-width: 479px) {
+            .hero-actions .btn { width: 100%; justify-content: center; }
+        }
+
+        /* Buttons — primary lime pill + ghost outline pill */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-text-on-accent);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-accent);
+        }
+
+        .btn-primary:active {
+            background: var(--color-accent-active);
+            transform: translateY(0) scale(0.97);
+            transition: 100ms ease-out;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1.5px solid var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+            background: rgba(212, 250, 61, 0.06);
+        }
+
+        .btn-ghost:active {
+            transform: scale(0.97);
+        }
+
+        /* Hero stat row */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            max-width: 420px;
+        }
+
+        .hero-stats .stat-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--color-text-primary);
+            line-height: 1.2;
+        }
+
+        .hero-stats .stat-cap {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--color-text-muted);
+        }
+
+        /* Collage — overlapping mock cards over a lime blur circle */
+        .hero-collage {
+            position: relative;
+            display: none;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-collage { display: block; }
+        }
+
+        .hero-blur {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            top: 8%;
+            right: -10%;
+            background: var(--color-accent);
+            filter: blur(80px);
+            opacity: 0.4;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .mock {
+            position: relative;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .mock-a {
+            width: 320px;
+            padding: 20px;
+            z-index: 3;
+        }
+
+        .mock-b {
+            width: 230px;
+            padding: 18px;
+            margin-top: -56px;
+            margin-left: 150px;
+            z-index: 2;
+            rotate: 3deg;
+        }
+
+        .mock-c {
+            width: 200px;
+            padding: 16px;
+            margin-top: -72px;
+            margin-left: -24px;
+            z-index: 4;
+            rotate: -4deg;
+        }
+
+        .mock-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 10px;
+        }
+
+        .mock-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--color-text-primary);
+            line-height: 1.1;
+        }
+
+        .mock-bar {
+            height: 8px;
+            border-radius: var(--radius-pill);
+            background: var(--color-bg-card-alt);
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .mock-bar > span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--color-accent);
+        }
+
+        .mock-ring {
+            --p: 62%;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            margin: 8px auto 4px;
+            background: conic-gradient(var(--color-accent) var(--p), var(--color-bg-card-alt) 0);
+            display: grid;
+            place-items: center;
+        }
+
+        .mock-ring::before {
+            content: "";
+            position: absolute;
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            background: var(--color-bg-card);
+        }
+
+        .mock-ring span {
+            position: relative;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--color-text-primary);
+        }
+        /* ================================================================
+           5. LOGO STRIP
+           ================================================================ */
+        .logos {
+            padding-block: 40px;
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .logos-label {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--color-text-muted);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .logo-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px 40px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            filter: grayscale(100%) opacity(0.5);
+            transition: filter 250ms ease;
+        }
+
+        .logo i {
+            font-size: 18px;
+        }
+
+        .logo:hover {
+            filter: grayscale(0%) opacity(1);
+            color: var(--color-text-primary);
+        }
+
+        /* ================================================================
+           6. SECTION HEADS + CARDS + SERVICES
+           ================================================================ */
+        .section-head {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .section-head .eyebrow {
+            background: transparent;
+            border: none;
+            padding: 0 0 0 0;
+            gap: 0;
+            border-radius: 0;
+        }
+
+        .section-head .eyebrow::before {
+            margin-right: 8px;
+        }
+
+        .cards-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--grid-gap);
+        }
+
+        @media (min-width: 640px) {
+            .cards-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .cards-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            padding: 32px 24px;
+            text-decoration: none;
+            transition: transform 350ms var(--ease-out),
+                box-shadow 350ms var(--ease-out),
+                border-color 350ms var(--ease-out);
+        }
+
+        @media (min-width: 1024px) {
+            .card { padding: 32px; }
+        }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-card-hover);
+            border-color: rgba(212, 250, 61, 0.4);
+        }
+
+        .card:active {
+            transform: translateY(-2px) scale(0.99);
+        }
+
+        .icon-badge {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            background: var(--color-bg-card-alt);
+            border: 1px solid rgba(212, 250, 61, 0.5);
+            color: var(--color-accent);
+            font-size: 19px;
+        }
+
+        .service h3 {
+            margin-bottom: 8px;
+        }
+
+        .service p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .learn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+
+        .learn i {
+            transition: transform 250ms ease;
+        }
+
+        .learn:hover i {
+            transform: translateX(3px);
+        }
+
+        /* ================================================================
+           7. PROOF STRIP
+           ================================================================ */
+        .proof {
+            padding-block: 0;
+        }
+
+        .proof-card {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        @media (min-width: 768px) {
+            .proof-card { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .proof-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 32px 24px;
+        }
+
+        .proof-item + .proof-item {
+            border-left: 1px solid var(--color-border);
+        }
+
+        @media (max-width: 767px) {
+            .proof-item:nth-child(3) { border-left: none; }
+            .proof-item:nth-child(n+3) { border-top: 1px solid var(--color-border); }
+        }
+
+        .proof-item .stat-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--color-text-primary);
+            line-height: 1.2;
+        }
+
+        .proof-item .stat-cap {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================================================
+           8. PROCESS STEPS
+           ================================================================ */
+        .steps {
+            list-style: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            .steps { gap: 0; }
+            .steps::before {
+                content: "";
+                position: absolute;
+                left: 23px;
+                top: 48px;
+                bottom: 48px;
+                width: 1px;
+                background: var(--color-border);
+            }
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .step { padding-bottom: 48px; }
+            .step:last-child { padding-bottom: 0; }
+        }
+
+        .step-num {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--color-accent);
+            flex-shrink: 0;
+            width: 48px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .step h3 {
+            margin-bottom: 6px;
+        }
+
+        .step p {
+            max-width: 56ch;
+            font-size: 14px;
+        }
+
+        /* ================================================================
+           9. WORK GRID
+           ================================================================ */
+        .work-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--grid-gap);
+        }
+
+        @media (min-width: 640px) {
+            .work-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .work-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .work-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            transition: transform 350ms var(--ease-out),
+                box-shadow 350ms var(--ease-out),
+                border-color 350ms var(--ease-out);
+        }
+
+        .work-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-card-hover);
+            border-color: rgba(212, 250, 61, 0.4);
+        }
+
+        .work-media {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: var(--color-bg-card-alt);
+        }
+
+        .work-thumb {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            font-size: 56px;
+            color: var(--color-text-muted);
+            transition: transform 600ms var(--ease-out);
+        }
+
+        .work-card:hover .work-thumb {
+            transform: scale(1.08);
+        }
+
+        .thumb-dash { background: linear-gradient(140deg, #1E1E1E, #161616 70%); color: var(--color-accent); }
+        .thumb-shop { background: linear-gradient(140deg, #161616, #101010 70%); }
+        .thumb-chat { background: linear-gradient(140deg, #1A1A1A, #141414 70%); }
+
+        .work-tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 5px 12px;
+            background: var(--color-accent);
+            color: var(--color-text-on-accent);
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 250ms ease 50ms, transform 250ms ease 50ms;
+        }
+
+        .work-card:hover .work-tag {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .work-card h3 {
+            padding: 20px 24px 0;
+        }
+
+        .work-card p {
+            padding: 8px 24px 24px;
+            font-size: 14px;
+        }
+
+        /* ================================================================
+           10. TESTIMONIALS
+           ================================================================ */
+        .carousel {
+            position: relative;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            padding: 40px 32px 32px;
+        }
+
+        .slides {
+            position: relative;
+            min-height: 240px;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            opacity: 0;
+            transform: translateX(24px);
+            transition: opacity 500ms var(--ease-nav), transform 500ms var(--ease-nav);
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .stars {
+            display: flex;
+            gap: 4px;
+            color: var(--color-star);
+            font-size: 15px;
+        }
+
+        .quote {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            max-width: 60ch;
+        }
+
+        .who {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .avatar {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--color-bg-card-alt);
+            border: 1px solid rgba(212, 250, 61, 0.5);
+            color: var(--color-accent);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .who strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .who span {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: var(--radius-pill);
+            background: var(--color-border);
+            border: none;
+            padding: 0;
+            transition: width 300ms ease, background-color 300ms ease;
+        }
+
+        .dot.active {
+            width: 24px;
+            background: var(--color-accent);
+        }
+
+        .ctl {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            background: var(--color-bg-card-alt);
+            color: var(--color-text-primary);
+            font-size: 16px;
+            transition: border-color 250ms ease, color 250ms ease, transform 250ms ease;
+        }
+
+        .ctl:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .ctl.next:hover { transform: translateY(-50%) rotate(8deg); }
+        .ctl.prev:hover { transform: translateY(-50%) rotate(-8deg); }
+
+        .ctl:active {
+            transform: translateY(-50%) scale(0.9);
+            transition: transform 300ms var(--ease-spring);
+        }
+
+        .ctl.next { right: 20px; }
+        .ctl.prev { left: 20px; }
+
+        @media (max-width: 767px) {
+            .ctl { display: none; }
+            .quote { font-size: 15px; }
+        }
+
+        /* ================================================================
+           11. CTA BANNER — full-width lime
+           ================================================================ */
+        .cta {
+            background: var(--color-accent);
+            padding-block: 80px;
+        }
+
+        .cta-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 32px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-inline: var(--container-pad);
+        }
+
+        @media (min-width: 768px) {
+            .cta-inner {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .cta h2 {
+            color: var(--color-text-on-accent);
+            max-width: 18ch;
+        }
+
+        .cta h2 em {
+            color: #FFFFFF;
+        }
+
+        .btn-dark {
+            background: var(--color-text-on-accent);
+            color: var(--color-accent);
+            border: none;
+            padding: 16px 32px;
+        }
+
+        .btn-dark:hover {
+            background: #1A1A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-dark:active {
+            transform: translateY(0) scale(0.97);
+        }
+
+        /* ================================================================
+           12. FOOTER
+           ================================================================ */
+        .footer {
+            padding-top: 80px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            padding-bottom: 64px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+        }
+
+        .footer-mark {
+            background: var(--color-bg-card-alt);
+            color: var(--color-accent);
+        }
+
+        .tagline {
+            font-size: 13px;
+            margin-top: 16px;
+            max-width: 28ch;
+        }
+
+        .footer-col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-col h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: none;
+            margin-bottom: 4px;
+        }
+
+        .footer-col a {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 200ms ease;
+        }
+
+        .footer-col a:hover {
+            color: var(--color-accent);
+        }
+
+        .socials {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            background: var(--color-bg-card);
+            color: var(--color-accent);
+            font-size: 16px;
+            transition: background-color 250ms ease, border-color 250ms ease, transform 250ms ease;
+        }
+
+        .social:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: var(--color-text-on-accent);
+        }
+
+        .social:active {
+            transform: scale(0.9);
+            transition: transform 300ms var(--ease-spring);
+        }
+
+        .copy-bar {
+            border-top: 1px solid var(--color-border);
+            padding-block: 24px;
+        }
+
+        .copy-inner {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 8px 24px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================================================
+           13. SCROLL REVEAL + HERO ENTRANCE + H1 PULSE
+           ================================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+        }
+
+        .reveal.in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero-copy > * {
+            opacity: 0;
+            transform: translateY(16px);
+            animation: hero-in 400ms ease-out forwards;
+        }
+
+        .hero-copy > :nth-child(1) { animation-delay: 0ms; }
+        .hero-copy > :nth-child(2) { animation-delay: 100ms; }
+        .hero-copy > :nth-child(3) { animation-delay: 200ms; }
+        .hero-copy > :nth-child(4) { animation-delay: 300ms; }
+        .hero-copy > :nth-child(5) { animation-delay: 400ms; }
+
+        @keyframes hero-in {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lime word pulse — hero H1 only */
+        .hero h1 em {
+            animation: lime-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes lime-pulse {
+            0%, 100% { text-shadow: 0 0 0px rgba(212, 250, 61, 0); }
+            50% { text-shadow: 0 0 16px rgba(212, 250, 61, 0.5); }
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .reveal, .slide, .nav-chip, .dot, .ctl, .card, .work-card { }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal, .hero-copy > * {
+                opacity: 1;
+                transform: none;
+                animation: none;
+                transition: none;
+            }
+            .hero h1 em { animation: none; }
+            .work-card:hover .work-thumb { transform: none; }
+            html { scroll-behavior: auto; }
+        }
+        /* SECTION-SLOT */
     </style>
 </head>
 
-<body class="manager-dashboard-page">
-    <div class="landing-wrap">
-        <div class="landing-band" aria-hidden="true"></div>
+<body>
+<!-- 1. TOP BAND -->
+<header class="band">
+    <div class="band-inner">
+        <a class="brand" href="#top">
+            <span class="brand-mark"><i class="bi bi-kanban"></i></span>
+            <span class="brand-name">ankur<span style="color:#5A7A0A">.dev</span></span>
+        </a>
 
-        <div class="landing-hero">
-            <h1>Manager UI <span>previews</span></h1>
-            <p>Static design previews for the manager dashboard redesign. One shared stylesheet, dark mode included.</p>
+        <nav class="nav-pill" aria-label="Primary">
+            <span class="nav-chip" id="navChip" aria-hidden="true"></span>
+            <a href="#services" data-nav>Services</a>
+            <a href="#work" data-nav class="active">Work</a>
+            <a href="#process" data-nav>Process</a>
+            <a href="#testimonials" data-nav>Testimonials</a>
+        </nav>
+
+        <a class="btn-band band-cta" href="#contact">
+            Let's Talk
+            <i class="bi bi-arrow-right"></i>
+        </a>
+
+        <button class="hamburger" id="menuOpen" aria-label="Open menu">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+</header>
+
+<!-- Full-screen mobile menu -->
+<div class="menu" id="menu" role="dialog" aria-label="Menu">
+    <div class="menu-head">
+        <a class="brand" href="#top">
+            <span class="brand-mark"><i class="bi bi-kanban"></i></span>
+            <span class="brand-name">ankur<span style="color:#5A7A0A">.dev</span></span>
+        </a>
+        <button class="menu-close" id="menuClose" aria-label="Close menu">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <a class="menu-link" href="#services">Services</a>
+    <a class="menu-link" href="#work">Work</a>
+    <a class="menu-link" href="#process">Process</a>
+    <a class="menu-link" href="#testimonials">Testimonials</a>
+    <a class="btn btn-primary menu-cta" href="#contact">Let's Talk <i class="bi bi-arrow-right"></i></a>
+</div>
+
+<main id="top">
+    <!-- 2. HERO -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-copy">
+                <span class="eyebrow">Full-stack design engineer</span>
+                <h1>Interfaces that <em>ship</em>, not just showcase</h1>
+                <p>I design and build the TaskDrobe manager suite — one design system, two themes, nine breakpoints, every interaction hand-tuned. Below is the live product, not a mockup.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="man_dashboard.html">
+                        Open the live dashboard
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a class="btn btn-ghost" href="#work">See the breakdown</a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <div class="stat-num" data-count="9">0</div>
+                        <div class="stat-cap">breakpoints, 400px up</div>
+                    </div>
+                    <div>
+                        <div class="stat-num" data-count="2">0</div>
+                        <div class="stat-cap">themes, one toggle</div>
+                    </div>
+                    <div>
+                        <div class="stat-num" data-count="100" data-suffix="%">0</div>
+                        <div class="stat-cap">hand-checked contrast</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-collage" aria-hidden="true">
+                <div class="hero-blur"></div>
+                <div class="mock mock-a">
+                    <div class="mock-label">Team delivery</div>
+                    <div class="mock-value">91%</div>
+                    <div class="mock-bar"><span style="width:91%"></span></div>
+                    <div class="mock-bar"><span style="width:78%; opacity:.6"></span></div>
+                    <div class="mock-bar"><span style="width:64%; opacity:.35"></span></div>
+                </div>
+                <div class="mock mock-b">
+                    <div class="mock-label">Sprint load</div>
+                    <div class="mock-ring"><span>62%</span></div>
+                </div>
+                <div class="mock mock-c">
+                    <div class="mock-label">Overdue</div>
+                    <div class="mock-value" style="color:var(--color-accent)">4</div>
+                </div>
+            </div>
         </div>
+    </section>
+    <!-- 3. LOGO STRIP -->
+    <section class="logos">
+        <div class="container">
+            <p class="logos-label">Built with, and battle-tested on</p>
+            <div class="logo-row">
+                <span class="logo"><i class="bi bi-filetype-ejs"></i>EJS</span>
+                <span class="logo"><i class="bi bi-bootstrap"></i>Bootstrap</span>
+                <span class="logo"><i class="bi bi-filetype-css"></i>CSS3</span>
+                <span class="logo"><i class="bi bi-bar-chart"></i>Chart.js</span>
+                <span class="logo"><i class="bi bi-github"></i>Git</span>
+                <span class="logo"><i class="bi bi-lightning-charge"></i>Netlify</span>
+            </div>
+        </div>
+    </section>
 
-        <div class="landing-cards">
-            <a class="landing-card" href="./man_dashboard.html">
-                <span class="landing-card-icon blue"><i class="bi bi-kanban"></i></span>
-                <span class="landing-card-body">
-                    <strong>Manager Dashboard</strong>
-                    <span>The redesigned manager home — stats, projects, tasks, deadlines and teams.</span>
-                    <em>Open preview <i class="bi bi-arrow-right"></i></em>
-                </span>
+    <!-- 4. SERVICES -->
+    <section id="services">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Services</span>
+                <h2>What I take <em>off your plate</em></h2>
+            </div>
+            <div class="cards-3">
+                <article class="card service reveal">
+                    <span class="icon-badge"><i class="bi bi-palette"></i></span>
+                    <h3>Design systems</h3>
+                    <p>Tokens, type scales and states documented once — every page inherits them. One CSS file drives the whole manager suite.</p>
+                    <a class="learn" href="man_dashboard.html">See it live <i class="bi bi-arrow-right"></i></a>
+                </article>
+                <article class="card service reveal">
+                    <span class="icon-badge"><i class="bi bi-phone"></i></span>
+                    <h3>Responsive engineering</h3>
+                    <p>Nine breakpoints from 400px phones to 1920px desktops. Verified with headless-browser screenshots, not hope.</p>
+                    <a class="learn" href="man_dashboard.html">See it live <i class="bi bi-arrow-right"></i></a>
+                </article>
+                <article class="card service reveal">
+                    <span class="icon-badge"><i class="bi bi-moon-stars"></i></span>
+                    <h3>Theming that holds</h3>
+                    <p>Dark and light from one token set. Charts re-read colors on toggle — nothing goes stale between themes.</p>
+                    <a class="learn" href="man_dashboard.html">See it live <i class="bi bi-arrow-right"></i></a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. STATS / PROOF STRIP -->
+    <section class="proof">
+        <div class="container">
+            <div class="proof-card reveal">
+                <div class="proof-item">
+                    <div class="stat-num" data-count="50" data-suffix="K+">0</div>
+                    <div class="stat-cap">lines of CSS, one file</div>
+                </div>
+                <div class="proof-item">
+                    <div class="stat-num" data-count="9">0</div>
+                    <div class="stat-cap">EJS views restyled, zero markup edits</div>
+                </div>
+                <div class="proof-item">
+                    <div class="stat-num" data-count="4" data-suffix=".5:1+">0</div>
+                    <div class="stat-cap">minimum contrast, both themes</div>
+                </div>
+                <div class="proof-item">
+                    <div class="stat-num" data-count="0">0</div>
+                    <div class="stat-cap">layout regressions on phones</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. PROCESS -->
+    <section id="process">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Process</span>
+                <h2>How the work <em>gets done</em></h2>
+            </div>
+            <ol class="steps">
+                <li class="step reveal">
+                    <span class="step-num">01</span>
+                    <div>
+                        <h3>Audit the real markup</h3>
+                        <p>Read every EJS partial before writing a line of CSS. Class names in the preview match the shipped templates exactly — what you see is what renders.</p>
+                    </div>
+                </li>
+                <li class="step reveal">
+                    <span class="step-num">02</span>
+                    <div>
+                        <h3>Tokenize before styling</h3>
+                        <p>Colors, radii, shadows and easings become custom properties first. Dark and light are two value sets over one structure — never two stylesheets.</p>
+                    </div>
+                </li>
+                <li class="step reveal">
+                    <span class="step-num">03</span>
+                    <div>
+                        <h3>Verify with a real browser</h3>
+                        <p>Headless Chromium screenshots at phone, laptop and full-HD widths, checked pixel-by-pixel. Reduced-motion and touch states are first-class, not afterthoughts.</p>
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </section>
+    <!-- 7. WORK / PORTFOLIO GRID -->
+    <section id="work">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Selected work</span>
+                <h2>Projects from the <em>TaskDrobe suite</em></h2>
+            </div>
+            <div class="work-grid">
+                <a class="work-card reveal" href="man_dashboard.html">
+                    <div class="work-media">
+                        <div class="work-thumb thumb-dash"><i class="bi bi-kanban"></i></div>
+                        <span class="work-tag">Design system</span>
+                    </div>
+                    <h3>Manager Dashboard</h3>
+                    <p>The flagship view — stats, project portfolio, task doughnut, deadlines and team overview in one restyled system.</p>
+                </a>
+                <a class="work-card reveal" href="ecommerce_dashboard.html">
+                    <div class="work-media">
+                        <div class="work-thumb thumb-shop"><i class="bi bi-graph-up-arrow"></i></div>
+                        <span class="work-tag">Analytics</span>
+                    </div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>The original white-canvas reference build that kicked off the design language — kept online for comparison.</p>
+                </a>
+                <a class="work-card reveal" href="#work">
+                    <div class="work-media">
+                        <div class="work-thumb thumb-chat"><i class="bi bi-chat-dots"></i></div>
+                        <span class="work-tag">Coming soon</span>
+                    </div>
+                    <h3>Messages &amp; Chat</h3>
+                    <p>Workspace messaging is stubbed in the sidebar and next in line for the same treatment.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. TESTIMONIALS -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="carousel reveal">
+                <div class="slides" id="slides">
+                    <blockquote class="slide" aria-hidden="false">
+                        <div class="stars" aria-label="5 out of 5 stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="quote">"The redesign dropped into our EJS templates without touching a single view. Same markup, completely different product."</p>
+                        <footer class="who">
+                            <span class="avatar">MR</span>
+                            <div>
+                                <strong>Maya Rahman</strong>
+                                <span>Product Manager, TaskDrobe</span>
+                            </div>
+                        </footer>
+                    </blockquote>
+                    <blockquote class="slide" aria-hidden="true">
+                        <div class="stars" aria-label="5 out of 5 stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="quote">"Checked it on my phone, my laptop and the 1080p monitor in the meeting room. No broken layout anywhere. That never happens."</p>
+                        <footer class="who">
+                            <span class="avatar">AK</span>
+                            <div>
+                                <strong>Alex Kim</strong>
+                                <span>Engineering Lead</span>
+                            </div>
+                        </footer>
+                    </blockquote>
+                    <blockquote class="slide" aria-hidden="true">
+                        <div class="stars" aria-label="5 out of 5 stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="quote">"One CSS file for nine pages felt reckless until we saw the token layer. Now a rebrand is an afternoon, not a quarter."</p>
+                        <footer class="who">
+                            <span class="avatar">JS</span>
+                            <div>
+                                <strong>Jordan Silva</strong>
+                                <span>Full-stack Developer</span>
+                            </div>
+                        </footer>
+                    </blockquote>
+                </div>
+                <div class="dots" id="dots" role="tablist" aria-label="Testimonials"></div>
+                <button class="ctl prev" id="prevSlide" aria-label="Previous testimonial"><i class="bi bi-arrow-left"></i></button>
+                <button class="ctl next" id="nextSlide" aria-label="Next testimonial"><i class="bi bi-arrow-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. CTA BANNER — full-width lime -->
+    <section class="cta" id="contact">
+        <div class="cta-inner">
+            <h2>Have an interface that <em>deserves better</em>?</h2>
+            <a class="btn btn-dark" href="mailto:hello@ankursantra.dev">
+                Let's Talk
+                <i class="bi bi-arrow-right"></i>
             </a>
         </div>
+    </section>
 
-        <div class="landing-foot">
-            <i class="bi bi-info-circle"></i>
-            EJS templates and the shared stylesheet live in the repo — previews are static HTML copies.
+    <!-- 10. FOOTER -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div>
+                <a class="brand" href="#top" style="color:var(--color-text-primary)">
+                    <span class="brand-mark footer-mark"><i class="bi bi-kanban"></i></span>
+                    <span class="brand-name" style="color:var(--color-text-primary)">ankur<span style="color:var(--color-accent)">.dev</span></span>
+                </a>
+                <p class="tagline">Design engineer for the TaskDrobe suite. One system, every screen.</p>
+            </div>
+            <nav class="footer-col" aria-label="Work">
+                <h3>Work</h3>
+                <a href="man_dashboard.html">Manager Dashboard</a>
+                <a href="ecommerce_dashboard.html">Analytics Dashboard</a>
+                <a href="#work">Messages (soon)</a>
+            </nav>
+            <nav class="footer-col" aria-label="Sections">
+                <h3>Sections</h3>
+                <a href="#services">Services</a>
+                <a href="#process">Process</a>
+                <a href="#testimonials">Testimonials</a>
+            </nav>
+            <div class="footer-col">
+                <h3>Elsewhere</h3>
+                <div class="socials">
+                    <a class="social" href="https://github.com/ankursantra-dev" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                    <a class="social" href="mailto:hello@ankursantra.dev" aria-label="Email"><i class="bi bi-envelope"></i></a>
+                    <a class="social" href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
         </div>
+        <div class="copy-bar">
+            <div class="container copy-inner">
+                <span>© 2026 Ankur Santra</span>
+                <span>Built with one CSS file and a headless browser</span>
+            </div>
+        </div>
+    </footer>
+</main>
 
-        <div class="landing-band" aria-hidden="true"></div>
-    </div>
+<script>
+(function () {
+    "use strict";
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- Scroll reveal (staggered 80ms between siblings) ---------- */
+    var revealEls = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window && !reduced) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                var el = entry.target;
+                var siblings = Array.prototype.filter.call(el.parentElement.children, function (n) {
+                    return n.classList && n.classList.contains("reveal");
+                });
+                var idx = siblings.indexOf(el);
+                el.style.transitionDelay = (idx > 0 ? idx * 80 : 0) + "ms";
+                el.classList.add("in");
+                io.unobserve(el);
+            });
+        }, { threshold: 0.15 });
+        revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+        revealEls.forEach(function (el) { el.classList.add("in"); });
+    }
+
+    /* ---------- Count-up stats (once, easeOutExpo, 1200ms) ---------- */
+    function easeOutExpo(t) {
+        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    }
+
+    function countUp(el) {
+        var target = parseInt(el.getAttribute("data-count"), 10) || 0;
+        var suffix = el.getAttribute("data-suffix") || "";
+        if (reduced) {
+            el.textContent = target + suffix;
+            return;
+        }
+        var start = null;
+        var dur = 1200;
+        function frame(ts) {
+            if (!start) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            el.textContent = Math.round(easeOutExpo(p) * target) + suffix;
+            if (p < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+    }
+
+    var counters = document.querySelectorAll("[data-count]");
+    if ("IntersectionObserver" in window) {
+        var cio = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                countUp(entry.target);
+                cio.unobserve(entry.target);
+            });
+        }, { threshold: 0.4 });
+        counters.forEach(function (el) { cio.observe(el); });
+    } else {
+        counters.forEach(countUp);
+    }
+
+    /* ---------- Nav pill sliding chip ---------- */
+    var chip = document.getElementById("navChip");
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav-pill a"));
+
+    function moveChip(link) {
+        if (!chip || !link) return;
+        chip.style.width = link.offsetWidth + "px";
+        chip.style.transform = "translateX(" + (link.offsetLeft - 5) + "px)";
+        navLinks.forEach(function (a) { a.classList.remove("active"); });
+        link.classList.add("active");
+    }
+
+    navLinks.forEach(function (link) {
+        link.addEventListener("mouseenter", function () { moveChip(link); });
+    });
+
+    function syncChip() {
+        var active = document.querySelector(".nav-pill a.active") || navLinks[0];
+        if (active) moveChip(active);
+    }
+    window.addEventListener("load", syncChip);
+    window.addEventListener("resize", syncChip);
+
+    /* ---------- Mobile menu ---------- */
+    var menu = document.getElementById("menu");
+    var menuOpen = document.getElementById("menuOpen");
+    var menuClose = document.getElementById("menuClose");
+
+    function openMenu() {
+        menu.classList.add("open");
+        document.body.style.overflow = "hidden";
+        Array.prototype.forEach.call(menu.querySelectorAll(".menu-link"), function (link, i) {
+            link.style.transitionDelay = (60 * (i + 1)) + "ms";
+        });
+    }
+
+    function closeMenu() {
+        menu.classList.remove("open");
+        document.body.style.overflow = "";
+        Array.prototype.forEach.call(menu.querySelectorAll(".menu-link"), function (link) {
+            link.style.transitionDelay = "0ms";
+        });
+    }
+
+    if (menuOpen) menuOpen.addEventListener("click", openMenu);
+    if (menuClose) menuClose.addEventListener("click", closeMenu);
+    Array.prototype.forEach.call(menu.querySelectorAll("a"), function (link) {
+        link.addEventListener("click", closeMenu);
+    });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && menu.classList.contains("open")) closeMenu();
+    });
+
+    /* ---------- Testimonial carousel ---------- */
+    var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+    var dotsWrap = document.getElementById("dots");
+    var current = 0;
+    var timer = null;
+    var PAUSE_MS = 6000;
+
+    slides.forEach(function (_, i) {
+        var dot = document.createElement("button");
+        dot.className = "dot" + (i === 0 ? " active" : "");
+        dot.setAttribute("role", "tab");
+        dot.setAttribute("aria-label", "Testimonial " + (i + 1));
+        dot.addEventListener("click", function () { go(i); });
+        dotsWrap.appendChild(dot);
+    });
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+
+    function go(n) {
+        current = (n + slides.length) % slides.length;
+        slides.forEach(function (s, i) {
+            s.classList.toggle("active", i === current);
+            s.setAttribute("aria-hidden", i === current ? "false" : "true");
+        });
+        dots.forEach(function (d, i) {
+            d.classList.toggle("active", i === current);
+        });
+        restart();
+    }
+
+    function restart() {
+        if (timer) clearInterval(timer);
+        if (!reduced) timer = setInterval(function () { go(current + 1); }, PAUSE_MS);
+    }
+
+    document.getElementById("nextSlide").addEventListener("click", function () { go(current + 1); });
+    document.getElementById("prevSlide").addEventListener("click", function () { go(current - 1); });
+
+    var carousel = document.querySelector(".carousel");
+    carousel.addEventListener("mouseenter", function () { if (timer) clearInterval(timer); });
+    carousel.addEventListener("mouseleave", restart);
+    carousel.addEventListener("focusin", function () { if (timer) clearInterval(timer); });
+    carousel.addEventListener("focusout", restart);
+
+    /* Swipe — 50px threshold */
+    var startX = null;
+    carousel.addEventListener("touchstart", function (e) {
+        startX = e.touches[0].clientX;
+    }, { passive: true });
+    carousel.addEventListener("touchend", function (e) {
+        if (startX === null) return;
+        var dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) go(current + (dx < 0 ? 1 : -1));
+        startX = null;
+    }, { passive: true });
+
+    restart();
+})();
+</script>
+
 </body>
 
 </html>
