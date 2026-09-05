@@ -114,7 +114,7 @@
                 </div>
 
                 <button class="manager-icon-button" id="themeToggle" aria-label="Toggle theme">
-                    <i class="bi bi-moon"></i>
+                    <i class="bi bi-sun"></i>
                 </button>
 
                 <a class="manager-profile-button" href="#">
@@ -615,7 +615,7 @@
     if (sidebarClose) sidebarClose.addEventListener("click", closeSidebar);
     if (backdrop) backdrop.addEventListener("click", closeSidebar);
 
-    /* ---------- Theme toggle ---------- */
+    /* ---------- Theme toggle (dark is the default identity) ---------- */
     var themeToggle = document.getElementById("themeToggle");
     var themeIcon = themeToggle ? themeToggle.querySelector("i") : null;
 
@@ -625,27 +625,29 @@
     }
 
     function applyTheme(theme) {
-        if (theme === "dark") {
-            document.documentElement.setAttribute("data-theme", "dark");
-            if (themeIcon) themeIcon.className = "bi bi-sun";
+        if (theme === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+            if (themeIcon) themeIcon.className = "bi bi-moon";
         } else {
             document.documentElement.removeAttribute("data-theme");
-            if (themeIcon) themeIcon.className = "bi bi-moon";
+            if (themeIcon) themeIcon.className = "bi bi-sun";
         }
     }
 
     try {
         var saved = localStorage.getItem("manager-theme");
-        if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        if (saved === "light" || saved === "dark") {
+            applyTheme(saved);
+        } else {
             applyTheme("dark");
         }
-    } catch (e) { /* storage unavailable — stay light */ }
+    } catch (e) { /* storage unavailable — stay dark */ }
 
     if (themeToggle) {
         themeToggle.addEventListener("click", function () {
-            var isDark = document.documentElement.getAttribute("data-theme") === "dark";
-            applyTheme(isDark ? "light" : "dark");
-            try { localStorage.setItem("manager-theme", isDark ? "light" : "dark"); } catch (e) {}
+            var isLight = document.documentElement.getAttribute("data-theme") === "light";
+            applyTheme(isLight ? "dark" : "light");
+            try { localStorage.setItem("manager-theme", isLight ? "dark" : "light"); } catch (e) {}
             syncChartTheme();
         });
     }
@@ -656,10 +658,10 @@
 
     function chartColors() {
         return {
-            completed: readToken("--chart-completed", "#3B82F6"),
-            pending: readToken("--chart-pending", "#E5E7EB"),
-            overdue: readToken("--chart-overdue", "#EF4444"),
-            card: readToken("--card", "#FFFFFF")
+            completed: readToken("--chart-completed", "#D4FA3D"),
+            pending: readToken("--chart-pending", "#2E2E2E"),
+            overdue: readToken("--chart-overdue", "#FF6B6B"),
+            card: readToken("--card", "#1A1A1A")
         };
     }
 
@@ -689,7 +691,7 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: "#111827",
+                        backgroundColor: "#131313",
                         padding: 10,
                         cornerRadius: 8,
                         titleFont: { family: "Inter, sans-serif", weight: "600", size: 12 },
