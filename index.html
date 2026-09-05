@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manager UI | TaskDrobe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./manager_dashboard.css">
+    <style>
+        /* Landing-only styles — everything visual comes from manager_dashboard.css tokens */
+        body.manager-dashboard-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 32px 20px;
+        }
+
+        .landing-wrap {
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .landing-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .landing-hero h1 {
+            font-size: clamp(26px, 4vw, 34px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .landing-hero p {
+            margin-top: 6px;
+            font-size: 14.5px;
+            font-weight: 300;
+            color: var(--text-2);
+        }
+
+        .landing-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .landing-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .landing-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 22px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            text-decoration: none;
+            transition: box-shadow var(--tr),
+                transform var(--tr);
+        }
+
+        .landing-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .landing-card:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: var(--radius);
+        }
+
+        .landing-card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .landing-card-icon.blue {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .landing-card-icon.green {
+            background: var(--green-soft);
+            color: var(--green-text);
+        }
+
+        .landing-card-body strong {
+            display: block;
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .landing-card-body span {
+            display: block;
+            margin-top: 3px;
+            font-size: 12.5px;
+            font-weight: 300;
+            color: var(--text-2);
+            line-height: 1.5;
+        }
+
+        .landing-card-body em {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-style: normal;
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .landing-foot {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--muted);
+        }
+
+        .landing-foot i {
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body class="manager-dashboard-page">
+    <div class="landing-wrap">
+        <div class="landing-brand">
+            <span class="manager-brand-icon"><i class="bi bi-kanban"></i></span>
+            <span class="manager-brand-text">Task<span>Drobe</span></span>
+        </div>
+
+        <div class="landing-hero">
+            <h1>Manager UI previews</h1>
+            <p>Static design previews for the manager dashboard redesign. One shared stylesheet, dark mode included.</p>
+        </div>
+
+        <div class="landing-cards">
+            <a class="landing-card" href="./man_dashboard.html">
+                <span class="landing-card-icon blue"><i class="bi bi-kanban"></i></span>
+                <span class="landing-card-body">
+                    <strong>Manager Dashboard</strong>
+                    <span>The redesigned manager home — stats, projects, tasks, deadlines and teams.</span>
+                    <em>Open preview <i class="bi bi-arrow-right"></i></em>
+                </span>
+            </a>
+
+            <a class="landing-card" href="./ecommerce_dashboard.html">
+                <span class="landing-card-icon green"><i class="bi bi-graph-up-arrow"></i></span>
+                <span class="landing-card-body">
+                    <strong>E-Commerce Dashboard</strong>
+                    <span>The approved NexaMart reference design the manager UI is based on.</span>
+                    <em>Open preview <i class="bi bi-arrow-right"></i></em>
+                </span>
+            </a>
+        </div>
+
+        <div class="landing-foot">
+            <i class="bi bi-info-circle"></i>
+            EJS templates and the shared stylesheet live in the repo — previews are static HTML copies.
+        </div>
+    </div>
+</body>
+</html>
